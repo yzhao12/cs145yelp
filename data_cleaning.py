@@ -8,6 +8,9 @@ from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import MultiLabelBinarizer
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.decomposition import TruncatedSVD
 
 '''
 le = preprocessing.LabelEncoder()
@@ -62,6 +65,27 @@ def one_hot_encoded_multiclass(df,feature,default_value_name):
     #results_union = set().union(*cat)
 
     return df, default_value[0]
+
+def review_to_tfidf(df, feature):
+    reviewsText = df[feature]
+    count_vect = CountVectorizer()
+    reviewCounts = count_vect.fit_transform(reviewsText)
+
+    tfidf_transformer = TfidfTransformer(use_idf=True)
+    reviewTfidf = tfidf_transformer.fit_transform(reviewCounts)
+
+    tsvd = TruncatedSVD(n_components=50)
+    reduced_reviewTfidf = tsvd.fit_transform(reviewTfidf)
+
+    return reduced_reviewTfidf
+
+def idToNumber(df, feature):
+    ids = df[feature]
+    le = LabelEncoder()
+    le.fit(ids)
+    return le
+
+
 
 #clean_boolean_feature(businesses['attributes_BikeParking'],True)
 
