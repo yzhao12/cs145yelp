@@ -63,6 +63,30 @@ def one_hot_encoded_multiclass(df,feature,default_value_name):
 
     return df, default_value[0]
 
+def get_mulitple_features_from_one(df,feature,keys):
+    feautre_values = df[feature].str.split(',').values
+    final_feature_values = np.zeros(shape=(len(df), len(keys)))
+    final_feature_values.fill(-1)
+    #final_feature_values =[]
+    for idx,value in enumerate(feautre_values):
+        feature_value_for_single_data_point = np.zeros(shape=(len(keys)))
+        feature_value_for_single_data_point.fill(-1)
+        for idk, key_value_pair in enumerate(value) :
+                val = str(key_value_pair).split()
+                val = val[1]
+                if(val == "False" or val == "False}"):
+                    val = -1
+                else:
+                    val = 1
+                feature_value_for_single_data_point[idk]= val
+
+        #feature_value_for_single_data_point = np.array(feature_value_for_single_data_point)
+        final_feature_values[idx]=  feature_value_for_single_data_point
+    #final_feature_values = np.array(final_feature_values)
+    for idx, key in enumerate(keys):
+        df[key] = final_feature_values[:,idx]
+    return df
+
 #clean_boolean_feature(businesses['attributes_BikeParking'],True)
 
 '''
